@@ -1,10 +1,21 @@
 # coding=utf-8
-import re
+
+
 from language import Language
 from query import Query
+import re
 
 
 class English(Language):
+
+    def and_phrase(self):
+        return ' and '
+
+    def or_phrase(self):
+        return ' or '
+
+    def decade_plural_phrase(self):
+        return 's'
 
     def regular_expressions(self):
         an = ' (an?y? )?'
@@ -45,10 +56,12 @@ class English(Language):
             (60, re.compile(cmd + newest_unseen + episode + ' with' + an + self.actor, re.I)),
             (30, re.compile(cmd + newest_unseen + episode + of + time, re.I)),
             (20, re.compile(cmd + newest_unseen + episode + ' with' + an + self.actor + of + time, re.I)),
+            (30, re.compile(cmd + newest_unseen + episode + of + self.title + of + time, re.I)),
             # Movies:
             (50, re.compile(cmd + newest_unseen + genre_movie + ' with' + an + self.actor, re.I)),
             (40, re.compile(cmd + newest_unseen + genre_movie + of + '(the )?(director )?' + self.director, re.I)),
             (30, re.compile(cmd + newest_unseen + genre_movie + of + time, re.I)),
+            (20, re.compile(cmd + newest_unseen + genre_movie + ' with' + an + self.actor + of + time, re.I)),
             (20, re.compile(cmd + newest_unseen + genre_movie + ' with( a)?( better| higher)? rating( above| better| higher| over)? (as|than|then) ' + self.higher_than_rating, re.I)),
             (20, re.compile(cmd + newest_unseen + genre_movie + ' with( a)?( worse| lower)? rating( below| worse| lower| under)? (as|than|then) ' + self.lower_than_rating, re.I)),
             (20, re.compile(cmd + newest_unseen + genre_movie + ' (with( a)? content rating( of)?| (which|who) are rated) ' + self.contentRating, re.I)),
@@ -61,6 +74,10 @@ class English(Language):
 
 q = Query(English(), "http://192.168.0.30:32400", "Swordmaster")
 
+
+# q.execute("go to any episode of how i met your mother from 2008")
+
+q.execute("go to any movie with alan from the 2010s")
 
 exit(0)
 
@@ -87,6 +104,8 @@ q.execute("go to any episode from 88")
 q.execute("filter any episode with patrick")
 q.execute("another one")
 q.execute("play it")
+
+q.execute("go to where were we?")
 
 q.execute("pause movie")
 q.execute("change language")

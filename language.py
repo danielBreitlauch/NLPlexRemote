@@ -1,3 +1,4 @@
+
 from abc import ABCMeta, abstractmethod
 
 
@@ -20,6 +21,22 @@ class Language:
     @abstractmethod
     def regular_expressions(self):
         return []
+
+    @abstractmethod
+    def and_phrase(self):
+        return ''
+        # movie with bruce willis and alan rickman
+
+    @abstractmethod
+    def or_phrase(self):
+        return ''
+        # action or comedy movie
+
+    @abstractmethod
+    def decade_plural_phrase(self):
+        return ''
+        # movie from the 90s
+        # film aus den 90ern
 
     def match(self, text):
         solutions = []

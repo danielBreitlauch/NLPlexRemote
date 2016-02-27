@@ -1,14 +1,17 @@
-from random import Random
+
+
+from formatHelper import FormatHelper, filter_dict
 from plexapi.server import PlexServer
+from random import Random
 from datetime import datetime
 import threading
-from plex_helper import filter_dict, season_format, filter_case_insensitive, filter_year, filter_person
 
 
 class Query:
 
     def __init__(self, language, plex_url, client_name):
         self.lang = language
+        self.formatHelper = FormatHelper(language)
         self.plex = PlexServer(plex_url)
         self.client = self.plex.client(client_name)
 
@@ -21,15 +24,15 @@ class Query:
         # filter configuration
         self.filterable_in_episode = ['director', 'writer', 'year', 'decade']
         self.filterable_in_show = ['actor', 'genre', 'contentRating']
-        self.filter_config = {'actor': filter_person,
-                              'director': filter_person,
-                              'writer': filter_person,
-                              'producer': filter_person,
-                              'year': filter_year,
-                              'decade': filter_year,
-                              'genre': filter_case_insensitive,
-                              'country': filter_case_insensitive,
-                              'contentRating': filter_case_insensitive}
+        self.filter_config = {'actor': self.formatHelper.filter_person,
+                              'director': self.formatHelper.filter_person,
+                              'writer': self.formatHelper.filter_person,
+                              'producer': self.formatHelper.filter_person,
+                              'year': self.formatHelper.filter_year,
+                              'decade': self.formatHelper.filter_year,
+                              'genre': self.formatHelper.filter_case_insensitive,
+                              'country': self.formatHelper.filter_case_insensitive,
+                              'contentRating': self.formatHelper.filter_case_insensitive}
 
         for section in self.plex.library.sections():
             if section.TYPE == 'movie':
@@ -77,11 +80,13 @@ class Query:
         else:
             movie_filter = 'all'
 
-        args = self.create_filter(self.movies, matched)
-        if args is not None:
-            results = self.movies.search(title, filter=movie_filter, **args)
-            results = self.post_filter(matched, results)
-            for video in results:
+        multi_filters = self.create_filter(self.movies, matched)
+        if multi_filters:
+            results = self.movies.search(title, filter=movie_filter, **multi_filters.pop())
+            for filters in multi_filters:
+                filter_results = self.movies.search(title, filter=movie_filter, **filters)
+                results = [result for result in results if result in filter_results]
+            for video in self.post_filter(matched, results):
                 self.found_media.append((priority, actions, video))
 
     def search_episodes(self, matched, priority, actions):
@@ -89,29 +94,40 @@ class Query:
         season = matched.get('season')
 
         if 'unseen' in matched:
-            episode_filter = 'unwatched'
+            watched_filter = 'unwatched'
             matched['oldest'] = 'added'
         else:
-            episode_filter = 'all'
+            watched_filter = 'all'
 
-        show_args = self.create_filter(self.shows, filter_dict(matched, self.filterable_in_show))
-        episode_args = self.create_filter(self.shows, filter_dict(matched, self.filterable_in_episode))
-        if show_args is None or episode_args is None:
+        show_multi_filters = self.create_filter(self.shows, filter_dict(matched, self.filterable_in_show))
+        episode_multi_filters = self.create_filter(self.shows, filter_dict(matched, self.filterable_in_episode))
+        if show_multi_filters is None or episode_multi_filters is None:
             return
 
         episode_set = []
-        if episode_args:
-            episode_set = self.shows.searchEpisodes(title, filter=episode_filter, **episode_args)
+        used_episode_filter = False
+        if episode_multi_filters[0]:
+            used_episode_filter = True
+            episode_set = self.shows.searchEpisodes(None, filter=watched_filter, **episode_multi_filters.pop())
+            for filters in episode_multi_filters:
+                filter_episode_set = self.shows.searchEpisodes(title, filter=watched_filter, **filters)
+                episode_set = [result for result in episode_set if result in filter_episode_set]
 
         results = []
-        if show_args or season or not episode_args:
-            for show in self.shows.search(title, filter=episode_filter, **show_args):
+        used_show_filter = False
+        if show_multi_filters[0] or season or not used_episode_filter or title:
+            used_show_filter = True
+            show_set = self.shows.search(title, filter=watched_filter, **show_multi_filters.pop())
+            for filters in show_multi_filters:
+                filter_show_set = self.shows.search(title, filter=watched_filter, **filters)
+                show_set = [result for result in show_set if result in filter_show_set]
+            for show in show_set:
                 if season:
-                    show = show.season(season_format(season))
+                    show = show.season(self.formatHelper.season_format(season))
                 results += show.episodes(watched='unseen' not in matched)
 
-        if episode_args:
-            if show_args or season:
+        if used_episode_filter:
+            if used_show_filter:
                 results = [result for result in results if result in episode_set]
             else:
                 results = episode_set
@@ -128,18 +144,22 @@ class Query:
             self.found_media.append((priority, actions, video))
 
     def create_filter(self, library, matched):
-        filters = dict()
-        for key, (retrieve_method, filter_method) in self.filter_config.iteritems():
-            entity = matched.get(key)
-            if entity:
-                retrieve_method = getattr(library, 'get_' + key)
-                res = filter_method(retrieve_method(), entity)
-                if res:
-                    filters[key] = res
-                else:
-                    return None
+        multi_filter = [{}]
+        for key, filter_method in self.filter_config.iteritems():
+            entities = matched.get(key)
+            if entities:
+                server_entities = getattr(library, 'get_' + key)()
+                for index, entity in enumerate(entities.split(self.lang.and_phrase())):
+                    res = filter_method(server_entities, entity)
+                    if res:
+                        if len(multi_filter) <= index:
+                            multi_filter.append(multi_filter[0].copy())
+                        filters = multi_filter[index]
+                        filters[key] = res
+                    else:
+                        return None
 
-        return filters
+        return multi_filter
 
     @staticmethod
     def post_filter(matched, results):
@@ -179,14 +199,14 @@ class Query:
         highest_priority_actions = []
         for priority, actions, media in self.found_media:
             if priority == highest_priority:
-                highest_priority_actions.append(actions)
+                highest_priority_actions += actions
                 filtered.append(media)
         self.found_actions = highest_priority_actions
         self.found_media = filtered
 
     def execute_actions(self):
-        for action in self.found_actions:
-            print(action)
+        if self.found_actions:
+            print(self.found_actions[0])
 
         if not self.found_media:
             # direct actions
@@ -244,7 +264,3 @@ class Query:
         while not video or video == self.last_picked:
             video = self.last_request[Random().randint(0, len(self.last_request) - 1)]
         return video
-
-
-# TODO: support author1 and author2
-# if both are in query plex will <or> them together
