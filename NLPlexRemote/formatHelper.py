@@ -15,8 +15,8 @@ class FormatHelper:
                 return True
 
     def decade_fit(self, name, decade):
-        name = name.lower().replace(self.lang.decade_plural_phrase(), "")
-        decade = decade.lower().replace(self.lang.decade_plural_phrase(), "")
+        name = name.lower().replace(self.lang.decade_plural_phrase(), '')
+        decade = decade.lower().replace(self.lang.decade_plural_phrase(), '')
         if len(name) > 3:
             name = name[2:]
         if len(decade) > 3:

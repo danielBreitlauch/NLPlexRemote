@@ -7,7 +7,7 @@ from datetime import datetime
 import threading
 
 
-class Query:
+class Remote:
 
     def __init__(self, language, plex_url, client_name):
         self.lang = language
@@ -58,7 +58,7 @@ class Query:
                                                     'jump_backward', 'pause_toggle'] if action in matched]
 
             if direct_actions:
-                self.found_media.append((priority, direct_actions, []))
+                self.found_media.append((priority, direct_actions, None))
             else:
                 if 'movie' in matched:
                     function = self.search_movies
@@ -208,33 +208,33 @@ class Query:
         if self.found_actions:
             print(self.found_actions[0])
 
-        if not self.found_media:
-            # direct actions
-            if 'main_menu' in self.found_actions:
-                self.client.stop()
-            if 'subtitle_on' in self.found_actions:
-                self.client.subtitle("on")
-            if 'subtitle_off' in self.found_actions:
-                self.client.subtitle("off")
-            if 'subtitle_toggle' in self.found_actions:
-                self.client.subtitle("next")
-            if 'language_toggle' in self.found_actions:
-                self.client.switch_language()
-            if 'osd' in self.found_actions:
-                self.client.toggleOSD()
-            if 'jump_forward' in self.found_actions:
-                self.client.stepForward()
-            if 'jump_backward' in self.found_actions:
-                self.client.stepBack()
-            if 'pause_toggle' in self.found_actions:
-                self.client.pause()
-            if 'another_one' in self.found_actions:
-                self.last_picked = self.pick_another_one()
-                self.client.navigate(self.last_picked)
-            if 'play_it' in self.found_actions:
-                self.client.playMedia(self.last_picked)
-        else:
-            # search actions
+        # direct actions
+        if 'main_menu' in self.found_actions:
+            self.client.stop()
+        if 'subtitle_on' in self.found_actions:
+            self.client.subtitle('on')
+        if 'subtitle_off' in self.found_actions:
+            self.client.subtitle('off')
+        if 'subtitle_toggle' in self.found_actions:
+            self.client.subtitle('next')
+        if 'language_toggle' in self.found_actions:
+            self.client.switch_language()
+        if 'osd' in self.found_actions:
+            self.client.toggleOSD()
+        if 'jump_forward' in self.found_actions:
+            self.client.stepForward()
+        if 'jump_backward' in self.found_actions:
+            self.client.stepBack()
+        if 'pause_toggle' in self.found_actions:
+            self.client.pause()
+        if 'another_one' in self.found_actions:
+            self.last_picked = self.pick_another_one()
+            self.client.navigate(self.last_picked)
+        if 'play_it' in self.found_actions:
+            self.client.playMedia(self.last_picked)
+
+        # search actions
+        if 'follow_up' in self.found_actions or 'play' in self.found_actions or 'navigate' in self.found_actions:
             if 'follow_up' in self.found_actions:
                 self.found_media = [f for f in self.found_media if f in self.last_request]
 
