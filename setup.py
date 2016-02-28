@@ -14,8 +14,9 @@ setup(
     url='https://github.com/danielBreitlauch/NLPlexRemote',
     license='MIT',
     packages=find_packages(),
+    dependency_links=['https://github.com/danielBreitlauch/python-plexapi/zipball/master#egg=PlexAPI'],
     install_requires=[
-        '-e git+https://github.com/danielBreitlauch/python-plexapi.git#egg=PlexAPI',
+        'PlexAPI',
         'mock'
     ],
     long_description=open('README.md').read(),
