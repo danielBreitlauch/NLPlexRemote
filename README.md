@@ -1,5 +1,5 @@
 ## NLPlexRemote ##
-Remote control Plex clients with natural language.
+Natural language remote control for Plex clients.
 
 [![Build Status](https://travis-ci.org/danielBreitlauch/NLPlexRemote.svg?branch=master)](https://travis-ci.org/danielBreitlauch/NLPlexRemote)
 
@@ -81,4 +81,3 @@ r.execute('switch subtitles')
 r.execute('toggle language')
 r.execute('pause movie')
 ```
-}
