@@ -48,12 +48,12 @@ class English(Language):
             (80, re.compile(self.indicate_subtitle_off('(turn |switch )?subtitles? off'), re.I)),
             (80, re.compile(self.indicate_subtitle_toggle(change + 'subtitles?'), re.I)),
             (80, re.compile(self.indicate_language_toggle(change + 'languages?'), re.I)),
-            (80, re.compile(self.indicate_play_it('play( it)?'), re.I)),
+            (80, re.compile(self.indicate_play_it('^play( it)?$'), re.I)),
             (80, re.compile(self.indicate_another_choice('(choose )?an ?other( one)?'), re.I)),
             # TV
             (70, re.compile(cmd + newest_unseen + episode + of + self.title + ofin + 'season ' + self.season, re.I)),
-            (70, re.compile(cmd + newest_unseen + episode + ofin + 'season ' + self.season + of + self.title, re.I)),
-            (60, re.compile(cmd + newest_unseen + episode + of + self.title, re.I)),
+            (70, re.compile(cmd + newest_unseen + episode + ofin + 'season ' + self.season + of + self.title + '$', re.I)),
+            (60, re.compile(cmd + newest_unseen + episode + of + self.title + '$', re.I)),
             (60, re.compile(cmd + newest_unseen + episode + ' with' + an + self.actor, re.I)),
             (30, re.compile(cmd + newest_unseen + episode + of + time, re.I)),
             (20, re.compile(cmd + newest_unseen + episode + ' with' + an + self.actor + of + time, re.I)),
@@ -70,5 +70,5 @@ class English(Language):
             (20, re.compile(cmd + newest_unseen + genre_movie + '$', re.I)),
             (20, re.compile(cmd + self.contentRating + ' rated ' + newest_unseen + genre_movie, re.I)),
             # General search:
-            (10, re.compile(cmd + self.title, re.I))
+            (10, re.compile(cmd + self.title + '$', re.I))
         ]

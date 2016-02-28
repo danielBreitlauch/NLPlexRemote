@@ -6,7 +6,7 @@ class Language:
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        self.title = '(?P<title>.+)'
+        self.title = '(?P<title>.+?)'
         self.actor = '(?P<actor>.+)'
         self.season = '(?P<season>.+)'
         self.director = '(?P<director>.+)'

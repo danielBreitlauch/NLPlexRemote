@@ -1,44 +1,11 @@
-import unittest
 from NLPlexRemote import English
+from tests.regexTest import RegExTestCase
 
 
-class EnglishRegExTestCase(unittest.TestCase):
+class EnglishRegExTestCase(RegExTestCase):
 
     def setUp(self):
         self.lang = English()
-
-    def tearDown(self):
-        self.lang = None
-
-    def findMatchingKeys(self, text, assert_keys):
-        for priority, command in self.lang.match(text):
-            missing = [item for item in assert_keys if item not in command.keys()]
-            if not missing:
-                return
-        # Readable error
-        error = ''
-        for priority, command in self.lang.match(text):
-            missing = [item for item in assert_keys if item not in command.keys()]
-            error += str(missing) + ' not found in: ' + str(command) + '\n'
-        self.assertTrue(False, error)
-
-    def findMatchingValues(self, text, assertions):
-        for priority, command in self.lang.match(text):
-            missing = [item for item in assertions.keys()
-                       if item not in command.keys() or assertions[item] and assertions[item] != command[item]]
-            if not missing:
-                return
-        # Readable error
-        error = ''
-        for priority, command in self.lang.match(text):
-            missing = [item for item in assertions.keys() if item not in command.keys()]
-            if missing:
-                error += str(missing) + ' not found in: ' + str(command) + '\n'
-            else:
-                not_equal = [item for item in assertions.keys() if assertions[item] and assertions[item] != command[item]]
-                if not_equal:
-                    error += str(not_equal) + ' matched wrong: ' + str(command) + '\n'
-        self.assertTrue(False, error)
 
     def test_go_home(self):
         self.findMatchingKeys('go home', ['main_menu'])
