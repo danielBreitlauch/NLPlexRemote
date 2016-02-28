@@ -1,33 +1,13 @@
 """
 python -m unittest discover -v
 """
-from plexapi.library import MovieSection, ShowSection
 from plexapi.server import PlexServer
-from NLPlexRemote import Remote, English
 
 import mock
-import unittest
+from tests.mockedRemote import MockedRemote
 
 
-class EnglishTestCase(unittest.TestCase):
-
-    @mock.patch.object(PlexServer, '_connect')
-    @mock.patch.object(PlexServer, 'library')
-    @mock.patch.object(PlexServer, 'client')
-    def setUp(self, mock_client, mock_library, mock_connect):
-        self.movieSection = mock.create_autospec(MovieSection)
-        self.movieSection.TYPE = 'movie'
-        self.showSection = mock.create_autospec(ShowSection)
-        self.showSection.TYPE = 'show'
-        mock_library.sections.return_value = [self.movieSection, self.showSection]
-
-        self.remote = Remote(English(), 'http://address:32400', 'Swordmaster')
-
-    def tearDown(self):
-        self.client = None
-        self.movieSection = None
-        self.showSection = None
-        self.remote = None
+class CommandTestCase(MockedRemote):
 
     @mock.patch.object(PlexServer, 'search')
     def test_go_home(self, mock_search):
@@ -87,37 +67,3 @@ class EnglishTestCase(unittest.TestCase):
 #            self.client.navigate(self.last_picked)
 #        if 'play_it' in self.found_actions:
 #           self.client.playMedia(self.last_picked)
-
-
-
-
-
-'''
-exit(0)
-
-r.execute('play episode of how i met your mother')
-r.execute('go to any movie from the 60s')
-r.execute('go to any unseen movie from 2010')
-r.execute('go to any unseen movie rated PG-13')
-r.execute('go to any new movie with bruce willis')
-r.execute('go to any unseen movie with a rating higher than 8')
-r.execute('go to a fistful of datas')
-r.execute('go to any episode of how i met your mother from season 4')
-r.execute('go to the newest episode of how mother in season 3')
-r.execute('go to any unseen episode from limitless')
-r.execute('go to a new episode from agent carter')
-r.execute('go to an unseen romance')
-r.execute('go to an unseen action movie')
-r.execute('go to any new romance with george')
-r.execute('go to any unseen action movie rated PG-13')
-r.execute('go to any unseen action movie with a rating higher than 4')
-r.execute('play newest episode with amy acker')
-
-r.execute('go to any episode from 88')
-r.execute('filter any episode with patrick')
-r.execute('another one')
-r.execute('play it')
-
-r.execute('go to any movie with alan from the 2010s')
-
-'''

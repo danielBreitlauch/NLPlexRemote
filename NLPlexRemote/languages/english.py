@@ -28,8 +28,8 @@ class English(Language):
         follow_up = self.indicate_follow_up('(restrict|filter)')
         cmd = '(' + navi + '|' + play + '|' + follow_up + ')' + an
 
-        newest = self.indicate_newest('(the )?new(est)? ')
-        unseen = self.indicate_unseen('unseen ')
+        newest = self.indicate_newest('(the )?newest ')
+        unseen = self.indicate_unseen('(unseen|new) ')
         newest_unseen = '(' + newest + '|' + unseen + ')?'
 
         time = '(the )?((year )?' + self.year + '|(decade )?' + self.decade + 's?)'

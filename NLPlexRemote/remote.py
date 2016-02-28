@@ -53,9 +53,10 @@ class Remote:
         threads = []
         for priority, matched in commands:
             search_actions = [action for action in ['play', 'navigate', 'follow_up'] if action in matched]
-            direct_actions = [action for action in ['another_one', 'play_it', 'main_menu', 'subtitle_on', 'subtitle_off',
-                                                    'subtitle_toggle', 'language_toggle', 'osd', 'jump_forward',
-                                                    'jump_backward', 'pause_toggle'] if action in matched]
+            direct_actions = [action for action in ['another_one', 'play_it', 'main_menu', 'subtitle_on',
+                                                    'subtitle_off', 'subtitle_toggle', 'language_toggle',
+                                                    'osd', 'jump_forward', 'jump_backward',
+                                                    'pause_toggle'] if action in matched]
 
             if direct_actions:
                 self.found_media.append((priority, direct_actions, None))
