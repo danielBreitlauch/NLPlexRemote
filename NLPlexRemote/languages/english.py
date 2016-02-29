@@ -58,6 +58,7 @@ class English(Language):
             (30, re.compile(cmd + newest_unseen + episode + of + time, re.I)),
             (20, re.compile(cmd + newest_unseen + episode + ' with' + an + self.actor + of + time, re.I)),
             (30, re.compile(cmd + newest_unseen + episode + of + self.title + of + time, re.I)),
+            (20, re.compile(cmd + newest_unseen + episode + '$', re.I)),
             # Movies:
             (50, re.compile(cmd + newest_unseen + genre_movie + ' with' + an + self.actor, re.I)),
             (40, re.compile(cmd + newest_unseen + genre_movie + of + '(the )?(director )?' + self.director, re.I)),

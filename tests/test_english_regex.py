@@ -51,6 +51,9 @@ class EnglishRegExTestCase(RegExTestCase):
         self.findMatchingValues('play a fistful of datas', {'play': None, 'title': 'fistful of datas'})
 
     def test_episode(self):
+        self.findMatchingValues('go to new episodes',
+                                {'navigate': None, 'tv': None, 'unseen': None})
+
         self.findMatchingValues('play episode of how i met your mother',
                                 {'play': None, 'tv': None, 'title': 'how i met your mother'})
 
