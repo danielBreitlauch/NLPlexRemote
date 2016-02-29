@@ -42,7 +42,7 @@ class Remote:
 
     def execute(self, text):
         print(text)
-        commands = self.lang.match(text)
+        commands = self.lang.match(text.lower())
         self.search(commands)
         self.filter_highest_priority()
         self.execute_actions()
@@ -96,7 +96,6 @@ class Remote:
 
         if 'unseen' in matched:
             watched_filter = 'unwatched'
-            matched['oldest'] = 'added'
         else:
             watched_filter = 'all'
 
@@ -116,7 +115,7 @@ class Remote:
 
         results = []
         used_show_filter = False
-        if show_multi_filters[0] or season or not used_episode_filter or title:
+        if show_multi_filters[0] or season or not used_episode_filter or title or watched_filter == 'unwatched':
             used_show_filter = True
             show_set = self.shows.search(title, filter=watched_filter, **show_multi_filters.pop())
             for filters in show_multi_filters:
@@ -125,7 +124,8 @@ class Remote:
             for show in show_set:
                 if season:
                     show = show.season(self.formatHelper.season_format(season))
-                results += show.episodes(watched='unseen' not in matched)
+                res = show.episodes(watched='unseen' not in matched)
+                results += self.post_filter({'oldest': None}, res)
 
         if used_episode_filter:
             if used_show_filter:
