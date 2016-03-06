@@ -76,8 +76,11 @@ class Language:
     def indicate_jump_backward(self, text):
         return self.group('jump_backward', text)
 
-    def indicate_pause_toggle(self, text):
-        return self.group('pause_toggle', text)
+    def indicate_pause(self, text):
+        return self.group('pause', text)
+
+    def indicate_play_after_pause(self, text):
+        return self.group('play_after_pause', text)
 
     # play media selected
     def indicate_play(self, text):

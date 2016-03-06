@@ -56,7 +56,7 @@ class Remote:
             direct_actions = [action for action in ['another_one', 'play_it', 'main_menu', 'subtitle_on',
                                                     'subtitle_off', 'subtitle_toggle', 'language_toggle',
                                                     'osd', 'jump_forward', 'jump_backward',
-                                                    'pause_toggle'] if action in matched]
+                                                    'pause', 'play_after_pause'] if action in matched]
 
             if direct_actions:
                 self.found_media.append((priority, direct_actions, None))
@@ -226,8 +226,10 @@ class Remote:
             self.client.stepForward()
         if 'jump_backward' in self.found_actions:
             self.client.stepBack()
-        if 'pause_toggle' in self.found_actions:
+        if 'pause' in self.found_actions:
             self.client.pause()
+        if 'play_after_pause' in self.found_actions:
+            self.client.play()
         if 'another_one' in self.found_actions:
             self.last_picked = self.pick_another_one()
             if self.last_picked:

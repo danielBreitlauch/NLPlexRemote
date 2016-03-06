@@ -48,7 +48,8 @@ class German(Language):
             (80, re.compile(self.indicate_jump_forward('(springe? |gehe? )?(\d+ sekunden? )?vor(wärts)?$'), re.I)),
             (70, re.compile(self.indicate_main_menu('^stop.*'), re.I)),
             (80, re.compile(self.indicate_main_menu('(gehe|springe|wechsel|wechsle) (ins|zum) (haupt)?(menu|menü)'), re.I)),
-            (80, re.compile(self.indicate_pause_toggle('^pause$'), re.I)),
+            (80, re.compile(self.indicate_pause('^pause$'), re.I)),
+            (80, re.compile(self.indicate_play_after_pause('^weiter$'), re.I)),
             (80, re.compile(self.indicate_play_it('spiele? ((den )?film |(die )?episode |es )?ab$'), re.I)),
             (80, re.compile(self.indicate_another_choice('^(wähle? |spiele? |zeige? )?(einen? )?anderen?$'), re.I)),
             # TV

@@ -12,9 +12,13 @@ class EnglishRegExTestCase(RegExTestCase):
         self.findMatchingKeys('go to menu', ['main_menu'])
 
     def test_pause(self):
-        self.findMatchingKeys('pause movie', ['pause_toggle'])
-        self.findMatchingKeys('pause episode', ['pause_toggle'])
-        self.findMatchingKeys('pause', ['pause_toggle'])
+        self.findMatchingKeys('pause movie', ['pause'])
+        self.findMatchingKeys('pause episode', ['pause'])
+        self.findMatchingKeys('pause', ['pause'])
+
+    def test_play(self):
+        self.findMatchingKeys('play', ['play_after_pause'])
+        self.findMatchingKeys('play again', ['play_after_pause'])
 
     def test_change_language(self):
         self.findMatchingKeys('change language', ['language_toggle'])
@@ -45,6 +49,8 @@ class EnglishRegExTestCase(RegExTestCase):
 
     def test_play_it(self):
         self.findMatchingKeys('play it', ['play_it'])
+        self.findMatchingKeys('play movie', ['play_it'])
+        self.findMatchingKeys('play episode', ['play_it'])
 
     def test_general_search(self):
         self.findMatchingValues('go to where were we?', {'navigate': None, 'title': 'where were we?'})

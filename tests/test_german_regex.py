@@ -13,7 +13,10 @@ class GermanRegExTestCase(RegExTestCase):
         self.findMatchingKeys('stop', ['main_menu'])
 
     def test_pause(self):
-        self.findMatchingKeys('pause', ['pause_toggle'])
+        self.findMatchingKeys('pause', ['pause'])
+
+    def test_play(self):
+        self.findMatchingKeys('weiter', ['play_after_pause'])
 
     def test_change_language(self):
         self.findMatchingKeys('andere sprache', ['language_toggle'])
