@@ -45,7 +45,7 @@ class Remote:
         commands = self.lang.match(text.lower())
         self.search(commands)
         self.filter_highest_priority()
-        self.execute_actions()
+        return self.execute_actions()
 
     def search(self, commands):
         self.found_media = []
@@ -230,9 +230,11 @@ class Remote:
             self.client.pause()
         if 'another_one' in self.found_actions:
             self.last_picked = self.pick_another_one()
-            self.client.navigate(self.last_picked)
+            if self.last_picked:
+                self.client.navigate(self.last_picked)
         if 'play_it' in self.found_actions:
-            self.client.playMedia(self.last_picked)
+            if self.last_picked:
+                self.client.playMedia(self.last_picked)
 
         # search actions
         if 'follow_up' in self.found_actions or 'play' in self.found_actions or 'navigate' in self.found_actions:
@@ -248,6 +250,7 @@ class Remote:
                 elif 'navigate' in self.found_actions:
                     print('go to ' + str(self.last_picked))
                     self.client.navigate(self.last_picked)
+        return len(self.found_actions) > 0
 
     def pick_one(self):
         if len(self.found_media) == 0:
