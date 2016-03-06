@@ -16,7 +16,7 @@ class English(Language):
         return 's'
 
     def regular_expressions(self):
-        an = ' (an?y? )?'
+        an = ' (an?y? |the )?'
         of = ' (of|from) '
         ofin = ' (of|from|in) '
 
@@ -29,7 +29,7 @@ class English(Language):
         cmd = '(' + navi + '|' + play + '|' + follow_up + ')' + an
 
         newest = self.indicate_newest('(the )?newest ')
-        unseen = self.indicate_unseen('(unseen|new) ')
+        unseen = self.indicate_unseen('(unseen|new|unknown) ')
         newest_unseen = '(' + newest + '|' + unseen + ')?'
 
         time = '(the )?((year )?' + self.year + '|(decade )?' + self.decade + 's?)'
