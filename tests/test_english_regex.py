@@ -52,6 +52,9 @@ class EnglishRegExTestCase(RegExTestCase):
         self.findMatchingKeys('play movie', ['play_it'])
         self.findMatchingKeys('play episode', ['play_it'])
 
+    def test_another_one(self):
+        self.findMatchingKeys('another one', ['another_one'])
+
     def test_general_search(self):
         self.findMatchingValues('go to where were we?', {'navigate': None, 'title': 'where were we?'})
         self.findMatchingValues('play a fistful of datas', {'play': None, 'title': 'fistful of datas'})

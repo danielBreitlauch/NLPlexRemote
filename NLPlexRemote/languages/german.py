@@ -60,6 +60,7 @@ class German(Language):
             (30, re.compile(cmd + newest_unseen + episode + von + time + ab, re.I)),
             (20, re.compile(cmd + newest_unseen + episode + ' mit' + einem + self.actor + von + time + ab, re.I)),
             (30, re.compile(cmd + newest_unseen + episode + vllvon + self.title + von + time + ab, re.I)),
+            (20, re.compile(cmd + newest_unseen + episode + ab, re.I)),
             # Movies:
             (50, re.compile(cmd + newest_unseen + genre_movie + ' mit' + einem + self.actor + ab, re.I)),
             (30, re.compile(cmd + newest_unseen + genre_movie + von + time + ab, re.I)),
