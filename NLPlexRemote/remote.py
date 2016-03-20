@@ -96,6 +96,7 @@ class Remote:
 
         if 'unseen' in matched:
             watched_filter = 'unwatched'
+            matched['oldest'] = None
         else:
             watched_filter = 'all'
 
@@ -125,7 +126,7 @@ class Remote:
                 if season:
                     show = show.season(self.formatHelper.season_format(season))
                 res = show.episodes(watched='unseen' not in matched)
-                results += self.post_filter({'oldest': None}, res)
+                results += self.post_filter(matched, res)
 
         if used_episode_filter:
             if used_show_filter:
